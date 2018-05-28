@@ -86,9 +86,3 @@ How to add additional database metrics
 
 ## Example Playbook
 
-```yaml
-- hosts: all
-  roles:
-    - geerlingguy.docker
-```
-
