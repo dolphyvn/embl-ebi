@@ -26,10 +26,10 @@
    - elasticsearch
 
 - name: Start fluentd container on node
-  hosts: fluentd
+  hosts: all
   roles:
    - fluentd
 - name: Update rsyslog and restart
-  hosts: nodes
+  hosts: all
   roles:
    - rsyslog

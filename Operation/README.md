@@ -1,7 +1,7 @@
 # Ansible Playbook : Server management
 
 
-Ansible playbooks that installs some basic tools to collect server stats and logs
+Ansible playbooks that installs collectd + influxdb + grafana to collect your server metrics and fluentd + elasticsearch + kibana for your system/application logs analyzing/monitoring
 
 ## Playbook Architect:
 __Server metrics collection using (collectd + influxdb + grafana)__:
@@ -19,19 +19,19 @@ __Applications Logs collection using (fluentd + elasticsearch + kibana)__:
 [logo1]: https://docs.fluentd.org/images/fluentd-elasticsearch-kibana.png
 
 
-(Image copied from internet via google search via https://docs.fluentd.org/v0.12/articles/free-alternative-to-splunk-by-fluentd)
+(Image copied from internet via google search from origin link https://docs.fluentd.org/v0.12/articles/free-alternative-to-splunk-by-fluentd)
 
 ## Requirements
 
-None.
+You must have ansible installed on machine where you want to run this.
 
 ## Playbook description:
 - Roles can find under __roles__ folder.
   - **collectd**: Install collectd on server to collect server metrics like cpu, mem, load, disk, io...
-  - **docker**: Install docker-ce and docker-compose
+  - **docker**: Install docker-ce and docker-compose ( This role use most of the code from https://github.com/geerlingguy/ansible-role-docker )
   - **elasticsearch**: This role will create a single node elasticsearch cluster with kibana using docker
   - **fluentd**: This role will start a fluentd container which running fluentd agent to collectd logs and sent to elasticsearch 
-  - **grafana**: Install and start grafana dashboard container
+  - **grafana**: Install and start grafana dashboard container, which included a scripted dashboard that auto generate stats for all servers. ( Scripted dashboard come with 3 js files, which I copied from unknown author as I got it before and just reuse it. It's been a while and I forgot the origin link after I made some small changes on the code. )
   - **influxb**: Install and start an influxdb instance to receiving metrics from collectd
   - **rsyslog**: Install rsyslogs on server to collect system logs and send it to fluentd
 - __inventory__ file: Storing your inventory. You should change and define your server group and ip accordingly
@@ -65,24 +65,47 @@ On machine where you have ansible installed just run:
 
 ## How to use this playbook:
 
-This playbook only containt basic software stack that setup for you a central management tools to manage server metrics and your server system logs. Details can find in each role. 
+This playbook able to cover some basic server metrics and system/application logs for troubleshooting purpose. For additional metrics and applications logs you need to do more works. But it quit easy to do so
+
 __Example__: 
 
-If you already have an infrastructure where you also have grafana and influxdb running in order to get metrics for new server you should able to do it by change few variable from __inventory__ file where you should find influxdb setting
+- To add additional applications logs like apache logs you can easily changes **fluentd.j2** file from `fluentd` role by add more input type like below. 
 ```
-[all:vars]
-elasticsearch="192.168.3.198"
-elasticsearch_port="9200"
-rsyslog_es_index_name="rsyslog"
-influxdb="192.168.3.199"
-influxdb_port="25826"
-fluentd_host="192.168.3.198"
-fluentd_port="5140"
-```
-You should change `influxdb` and `influxdb_host` to your setting respectivily 
-How to add additional applications logs:
-How to add additional database logs
-How to add additional database metrics
+# Collect apache logs
 
-## Example Playbook
+<source>
+  @type tail
+  path /var/log/httpd/access.log #...or where you placed your Apache access log
+  pos_file /var/log/httpd/access.log.pos # This is where you record file position
+  tag apache
+  format apache2 # Do you have a custom format? You can write your own regex.
+</source>
+
+<match apache.**>
+  @type copy
+  <store>
+    @type elasticsearch
+    host {{ elasticsearch }}
+    port {{ elasticsearch_port }}
+    index_name {{ apache_es_index_name }}
+    time_key @timestamp
+    resurrect_after 5
+    flush_interval 1s
+  </store>
+  <store apache.**>
+    @type stdout
+  </store>
+</match>
+```
+
+You can remove 
+```
+  <store apache.**>
+    @type stdout
+  </store>
+```
+if you don't want to get log stdout to the console log.
+
+- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also you **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI* or **https://github.com/chrisboulton/collectd-python-mysql* which quit easy to tweak to match with your need.
+
 

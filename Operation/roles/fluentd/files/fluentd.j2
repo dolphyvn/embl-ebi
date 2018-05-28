@@ -5,7 +5,7 @@
   tag rsyslog
 </source>
 
-<match **>
+<match rsyslog.**>
   @type copy
   <store>
     @type elasticsearch
@@ -20,3 +20,29 @@
     @type stdout
   </store>
 </match>
+
+# Collect apache logs
+
+#<source>
+#  @type tail
+#  path /var/log/httpd/access.log #...or where you placed your Apache access log
+#  pos_file /var/log/httpd/access.log.pos # This is where you record file position
+#  tag apache
+#  format apache2 # Do you have a custom format? You can write your own regex.
+#</source>
+
+#<match apache.**>
+#  @type copy
+#  <store>
+#    @type elasticsearch
+#    host {{ elasticsearch }}
+#    port {{ elasticsearch_port }}
+#    index_name {{ apache_es_index_name }}
+#    time_key @timestamp
+#    resurrect_after 5
+#    flush_interval 1s
+#  </store>
+#  <store apache.**>
+#    @type stdout
+#  </store>
+#</match>
