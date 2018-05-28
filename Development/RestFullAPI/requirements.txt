@@ -1,0 +1,7 @@
+Flask-PyMongo==0.5.1
+flask==1.0
+requests==2.18.4
+Flask-RESTful==0.3.6
+#Flask-JWT==0.3.2
+#Flask-HTTPAuth==3.2.3
+flask-jwt-extended==3.9.1

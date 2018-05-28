@@ -1,0 +1,4 @@
+---
+influxdb_url: http://192.168.3.199:8086
+grafana_url: http://192.168.3.199:3000
+grafana_image_name: "dolphyvn/grafana"

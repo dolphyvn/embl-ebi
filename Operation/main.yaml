@@ -1,0 +1,35 @@
+---
+- name: Install public keys
+  hosts: all
+  roles:
+   - public_keys
+- name: Install docker
+  hosts: all
+  roles:
+   - docker
+- name: Start collectd
+  hosts: nodes
+  roles:
+   - collectd
+- name: Start Influxdb container on DB node
+  hosts: influxdb
+  roles:
+   - influxdb
+
+- name: Start Grafana container on DB node
+  hosts: grafana
+  roles:
+   - grafana
+- name: Start Elasticsearch container on DB node
+  hosts: elasticsearch
+  roles:
+   - elasticsearch
+
+- name: Start fluentd container on node
+  hosts: fluentd
+  roles:
+   - fluentd
+- name: Update rsyslog and restart
+  hosts: nodes
+  roles:
+   - rsyslog

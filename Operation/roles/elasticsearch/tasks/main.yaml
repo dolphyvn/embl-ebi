@@ -1,0 +1,40 @@
+#docker run -ti --rm -v /proc:/mnt/proc:ro -v /etc/collectd.d/collectd.conf:/etc/collectd.d/collectd.conf -v /etc/types.db:/usr/share/collectd/types.db --privileged --net=host  dolphyvn/collectd collectd -C /etc/collectd.d/collectd.conf -f
+---
+- name: Creates directory
+  file: 
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/elasticsearch
+    - /etc/kibana
+
+- name: Start elasticsearch container
+  docker_container:
+    name: elasticsearch
+    image: "{{ elasticsearch_image_version }}"
+    recreate: true
+    state: started
+    volumes:
+      - /etc/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+- name: Start kibana container
+  docker_container:
+    name: kibana
+    image: "{{ kibana_image_version }}"
+    recreate: true
+    state: started
+    volumes:
+      - /etc/kibana/:/usr/share/kibana/config:ro
+    env:
+      ELASTICSEARCH_URL: "{{ elasticsearch_url }}"
+    ports:
+      - "5601:5601"
+- name: Copy collectd configuration file
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'files/elasticsearch.yml', dest: '/etc/elasticsearch/elasticsearch.yml' }
+    - { src: 'files/kibana.yml', dest: '/etc/kibana/kibana.yml' }
+  notify: Restart elastic and kibana

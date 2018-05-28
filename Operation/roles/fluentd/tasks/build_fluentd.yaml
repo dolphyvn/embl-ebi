@@ -1,0 +1,12 @@
+---
+- name: Stop fluentd if any
+  docker_container:
+    name: fluentd
+    state: absent
+
+- name: Build custom fluentd image
+  docker_image:
+    path: /etc/fluentd/
+    name: "{{ fluentd_image_name }}"
+    state: present
+    force: yes

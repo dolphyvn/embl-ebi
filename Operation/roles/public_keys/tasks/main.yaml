@@ -1,0 +1,11 @@
+---
+- name: Create /root/.ssh directory
+  file:
+    path: /root/.ssh
+    state: directory
+    mode: 700
+- name: Update public key to authorized_keys file
+  copy: 
+    dest: /root/.ssh/authorized_keys
+    content: "{{ ssh_public_key_content }}"
+    mode: 644

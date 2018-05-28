@@ -1,0 +1,54 @@
+
+#Hostname    "localhost"
+#BaseDir     "${prefix}/var/lib/collectd"
+#PIDFile     "${prefix}/var/run/collectd.pid"
+#PluginDir   "${exec_prefix}/lib/collectd"
+TypesDB     "/usr/share/collectd/types.db"
+
+FQDNLookup false
+Interval 60
+ReadThreads 5
+
+LoadPlugin cpu
+LoadPlugin df
+LoadPlugin disk
+LoadPlugin interface
+LoadPlugin processes
+LoadPlugin network
+LoadPlugin load
+LoadPlugin memory
+LoadPlugin uptime
+LoadPlugin vmem
+LoadPlugin swap
+
+
+<Plugin disk>
+   Disk "/^sd/"
+   Disk "/^vd/"
+   Disk "/^nvm/"
+   IgnoreSelected false
+</Plugin>
+
+<Plugin "cpu">
+  ReportByState true
+  ReportByCpu false
+  ValuesPercentage true
+</Plugin>
+
+<Plugin "df">
+    ValuesPercentage "True"
+    MountPoint "/"
+</Plugin>
+
+<Plugin "memory">
+  ValuesPercentage true
+</Plugin>
+
+<Plugin "disk">
+	Disk "/sd[ab][12]/"
+	IgnoreSelected true
+</Plugin>
+
+<Plugin network>
+    Server "{{ influxdb }}" "{{ influxdb_port }}"
+</Plugin>

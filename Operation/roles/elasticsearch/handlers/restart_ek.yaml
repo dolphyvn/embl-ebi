@@ -1,0 +1,9 @@
+---
+- name: restart elasticsearch
+  docker_container:
+    name: elasticsearch
+    state: restart
+- name: restart kibana
+  docker_container:
+    name: kibana
+    state: restart

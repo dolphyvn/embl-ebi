@@ -1,0 +1,22 @@
+<source>
+  @type syslog
+  port 5140
+  bind 0.0.0.0
+  tag rsyslog
+</source>
+
+<match **>
+  @type copy
+  <store>
+    @type elasticsearch
+    host {{ elasticsearch }}
+    port {{ elasticsearch_port }}
+    index_name {{ rsyslog_es_index_name }}
+    time_key @timestamp
+    resurrect_after 5
+    flush_interval 1s
+  </store>
+  <store rsyslog.**>
+    @type stdout
+  </store>
+</match>

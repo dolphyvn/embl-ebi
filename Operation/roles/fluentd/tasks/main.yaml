@@ -1,0 +1,36 @@
+---
+- name: Creates directory
+  file: 
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/fluentd
+
+- name: Get md5sum of fluentd folder before
+  shell: find /etc/fluentd/ -xdev -type f -print0 | LC_COLLATE=C sort -z | xargs -0 cat| md5sum
+  register: md5_before
+
+- name: Copy fluentd configuration file
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'files/fluentd.j2', dest: '/etc/fluentd/fluentd.conf' }
+    - { src: 'files/Dockerfile', dest: '/etc/fluentd/Dockerfile' }
+
+- name: Get md5sum of fluentd folder after
+  shell: find /etc/fluentd/ -xdev -type f -print0 | LC_COLLATE=C sort -z | xargs -0 cat| md5sum
+  register: md5_after
+
+- include_tasks: build_fluentd.yaml
+  when: md5_before.stdout != md5_after.stdout
+
+
+- name: Start fluentd container
+  docker_container:
+    name: fluentd
+    image: "{{ fluentd_image_name }}"
+    state: started
+    ports:
+      - "5140:5140"
+      - "5140:5140/udp"
+    env:
+      FLUENTD_CONF: "fluentd.conf"

@@ -1,0 +1,25 @@
+---
+- name: Copy influxdb configuration file
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'files/influxdb.conf', dest: '/etc/influxdb.conf' }
+    - { src: 'files/types.db', dest: '/etc/types.db' }
+- name: Create volume for influxdb
+  docker_volume:
+    name: influxdb
+    state: present
+- name: Start Influxdb container
+  docker_container:
+    name: influxdb
+    image: influxdb
+    recreate: true
+    state: started
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+      - "25826:25826/udp"
+    volumes:
+      - influxdb:/var/lib/influxdb
+      - /etc/influxdb.conf:/etc/influxdb/influxdb.conf
+      - /etc/types.db:/usr/share/collectd/types.db
+      

@@ -1,0 +1,4 @@
+---
+elasticsearch_url: http://192.168.3.198:9200
+elasticsearch_image_version: "docker.elastic.co/elasticsearch/elasticsearch:6.2.4"
+kibana_image_version: "docker.elastic.co/kibana/kibana:6.2.4"

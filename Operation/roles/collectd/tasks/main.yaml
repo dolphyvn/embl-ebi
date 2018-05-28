@@ -1,0 +1,24 @@
+---
+- name: Install collectd to nodes
+  package:
+    name: collectd
+    state: latest
+
+- name: Start collectd
+  service:
+    name: collectd
+    state: started
+
+- name: Creates directory
+  file: 
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/collectd.d
+    - /usr/share/collectd
+
+- name: Copy collectd configuration file
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'files/collectd.j2', dest: '/etc/collectd.d/collectd.conf' }
+  notify: Restart collectd

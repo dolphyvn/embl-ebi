@@ -1,0 +1,3 @@
+---
+- name: Restart elastic and kibana
+  include: restart_ek.yaml

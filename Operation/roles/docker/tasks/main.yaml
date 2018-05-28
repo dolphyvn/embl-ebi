@@ -1,0 +1,28 @@
+---
+- include_tasks: redhat.yaml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: debian.yaml
+  when: ansible_os_family == 'Debian'
+
+- name: Install Docker.
+  package:
+    name: docker-ce
+    state: present
+  notify: restart docker
+
+- include_tasks: docker-compose.yaml
+  when: docker_install_compose
+
+- include_tasks: docker-users.yaml
+  when: docker_users
+
+- name: Ensure Docker is started and enabled at boot.
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Ensure handlers are notified now to avoid firewall conflicts.
+  meta: flush_handlers
+  when: docker_restart_on_package_change

@@ -1,0 +1,3 @@
+---
+# Insert public key of your own
+ssh_public_key_content: ""
