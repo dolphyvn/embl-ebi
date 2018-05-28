@@ -106,6 +106,6 @@ You can remove
 ```
 if you don't want to get log stdout to the console log.
 
-- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also you **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI* or **https://github.com/chrisboulton/collectd-python-mysql* which quit easy to tweak to match with your need.
+- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries...etc you can also use **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI* or **https://github.com/chrisboulton/collectd-python-mysql* which quit easy to tweak to match with your need.
 
 
