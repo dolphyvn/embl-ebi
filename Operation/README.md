@@ -129,10 +129,10 @@ if you don't want to get log stdout to the console log.
 ```
 __Use collectd + influxdb + grafana to collect server metrics and visualize it__:
 
-- **How to access scripted dashboard*: 
-   - After grafana started please head to url: http://{{grafana_url}}:3000 and login with user/pass default admin/admin
-   - To go to a specific server dashboard : http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname ( replace hostname with your server hostname )
-   - Or if you want to stack two dashboard side by side: (hostname1 and hostname2) http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname(1|2)&span=6
-   - Or you only want to display special metrics: http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname(1|2)&span=6&metric=cpu,load,memory
+- *How to access scripted dashboard* : 
+   - After grafana started please head to url: **http://{{grafana_url}}:3000** and login with user/pass default admin/admin
+   - To go to a specific server dashboard : **http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname** ( replace hostname with your server hostname )
+   - Or if you want to stack two dashboard side by side: (hostname1 and hostname2) **http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname(1|2)&span=6**
+   - Or you only want to display special metrics: **http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname(1|2)&span=6&metric=cpu,load,memory**
 
-- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also you **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI* or **https://github.com/chrisboulton/collectd-python-mysql* which quit easy to tweak to match with your need.
+- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also you **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI** or **https://github.com/chrisboulton/collectd-python-mysql** which quit easy to tweak to match with your need.
