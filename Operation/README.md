@@ -36,7 +36,7 @@ You must have ansible installed on machine where you want to run this.
   - **rsyslog**: Install rsyslogs on server to collect system logs and send it to fluentd
 - __inventory__ file: Storing your inventory. You should change and define your server group and ip accordingly
 - __main.yaml__: is the main yaml file where you can decide which roles you want to run. Make sure you double check what role you want to install.
-
+- Action plugins folder: This action plugin will create a templating dashboard for all running server with basic metrics like cpu/memory/load/disk space
 
 ## Role Variables
 
@@ -135,4 +135,18 @@ __Use collectd + influxdb + grafana to collect server metrics and visualize it__
    - Or if you want to stack two dashboard side by side: (hostname1 and hostname2) **http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname(1|2)&span=6**
    - Or you only want to display special metrics: **http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname(1|2)&span=6&metric=cpu,load,memory**
 
-- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also use **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI** or **https://github.com/chrisboulton/collectd-python-mysql** which quit easy to tweak to match with your need.
+- Templating dashboard can access via "**Main Dashboard**" at home page. ( You can search for it, usually it will appear after you login )
+  - To make the import for templating works properly you need to define hostname in the inventory file.
+  ```
+  [nodes]
+  node1 ansible_ssh_host=192.168.3.198
+  node2 ansible_ssh_host=192.168.3.199
+  node3 ansible_ssh_host=192.168.3.200
+  ```
+  - Please aware that group nodes has to be the same, unless you want to change it you also need to change in `grafana_import.py` in action_plugins folder ( line 39 )
+     ```
+     39       nodes = task_vars["groups"]["nodes"]
+     ```
+     ( It's better to get all server hostname via database, because sometime you want to automated your inventory files as well. This is just a quick dirty hack. )
+     
+- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also you **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI** or **https://github.com/chrisboulton/collectd-python-mysql** which quit easy to tweak to match with your need.

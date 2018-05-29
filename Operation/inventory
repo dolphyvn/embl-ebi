@@ -4,12 +4,15 @@ elasticsearch_port="9200"
 rsyslog_es_index_name="rsyslog"
 influxdb="192.168.3.199"
 influxdb_port="25826"
-fluentd_host="192.168.3.198"
+influxdb_url="http://192.168.3.199:8086"
+grafana_url="http://192.168.3.199:3000"
+fluentd_host="localhost"
 fluentd_port="5140"
 [nodes]
-192.168.3.199
-192.168.3.198
-192.168.3.188
+node1 ansible_ssh_host=192.168.3.198
+node2 ansible_ssh_host=192.168.3.199
+node3 ansible_ssh_host=192.168.3.200
+node4 ansible_ssh_host=192.168.3.201
 [grafana]
 192.168.3.199
 [fluentd]
