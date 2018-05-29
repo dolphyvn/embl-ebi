@@ -33,3 +33,4 @@
   hosts: all
   roles:
    - rsyslog
+

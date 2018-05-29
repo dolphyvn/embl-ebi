@@ -44,10 +44,13 @@
     user: admin
     password: admin
     force_basic_auth: yes
+    return_content: yes  
   register: grafana_collectd
   failed_when: false
   changed_when: false
   ignore_errors: True
+
+#- debug: var=grafana_collectd.status
 
 # Create datasource if not exist, ignore if it throwing any error, the creation still works.
 - name: Enable Colectd Datasource
@@ -61,9 +64,13 @@
       type: "influxdb"
       url: "{{ influxdb_url }}"
       access: "proxy"
+      database:  "collectd"
       isDefault: true
     force_basic_auth: yes
     status_code: 201
     body_format: json
   when: grafana_collectd.status == 404
   ignore_errors: True
+
+- name: Import template dashboard to grafana
+  action: grafana_import

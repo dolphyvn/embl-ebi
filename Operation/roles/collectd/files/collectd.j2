@@ -13,26 +13,47 @@ LoadPlugin cpu
 LoadPlugin df
 LoadPlugin disk
 LoadPlugin interface
-LoadPlugin processes
 LoadPlugin network
 LoadPlugin load
 LoadPlugin memory
 LoadPlugin uptime
 LoadPlugin vmem
 LoadPlugin swap
+LoadPlugin "aggregation"
+LoadPlugin logfile
+LoadPlugin syslog
+LoadPlugin tcpconns
+LoadPlugin processes
+LoadPlugin users
 
+
+<Plugin tcpconns>
+ LocalPort "80"
+</Plugin>
+<Plugin syslog>
+  LogLevel "info"
+</Plugin>
+
+<Plugin "logfile">
+  LogLevel "info"
+  File "stdout"
+</Plugin>
+
+<Plugin "aggregation">
+  <Aggregation>
+    Plugin "cpu"
+    Type "cpu"
+    GroupBy "Host"
+    GroupBy "TypeInstance"
+    CalculateAverage true
+  </Aggregation>
+</Plugin>
 
 <Plugin disk>
    Disk "/^sd/"
    Disk "/^vd/"
    Disk "/^nvm/"
    IgnoreSelected false
-</Plugin>
-
-<Plugin "cpu">
-  ReportByState true
-  ReportByCpu false
-  ValuesPercentage true
 </Plugin>
 
 <Plugin "df">
