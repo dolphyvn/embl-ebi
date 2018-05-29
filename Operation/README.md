@@ -67,16 +67,15 @@ On machine where you have ansible installed just run:
 
 This playbook able to cover some basic server metrics and system/application logs for troubleshooting purpose. For additional metrics and applications logs you need to do more works. But it quit easy to do so
 
-__Example__: 
+__Use fluentd for logs collection__: 
 
-- To add additional applications logs like apache logs you can easily changes **fluentd.j2** file from `fluentd` role by add more input type like below. 
+- To add additional applications logs like apache logs you can easily modify **fluentd.j2** file from `fluentd` role by add more input type like below. 
 ```
 # Collect apache logs
 
 <source>
   @type tail
   path /var/log/httpd/access.log #...or where you placed your Apache access log
-  pos_file /var/log/httpd/access.log.pos # This is where you record file position
   tag apache
   format apache2 # Do you have a custom format? You can write your own regex.
 </source>
@@ -105,7 +104,35 @@ You can remove
   </store>
 ```
 if you don't want to get log stdout to the console log.
+- If you want to collect your custom application like java,python,php you can do the same above but you might need to create your own custom file format.
+```
+<source>
+  @type tail
+  path /var/log/applications/app.log #...or where you placed your application log
+  tag custom_application
+  format custom_regex
+  custom_regex <> # Put your regex inside <> tag
+</source>
 
-- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries...etc you can also use **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI* or **https://github.com/chrisboulton/collectd-python-mysql* which quit easy to tweak to match with your need.
+<match custom_application.**>
+  @type copy
+  <store>
+    @type elasticsearch
+    host {{ elasticsearch }}
+    port {{ elasticsearch_port }}
+    index_name {{ custom_es_index_name }} # You should define this variable in vars/main.yaml file or just insert directly
+    time_key @timestamp
+    resurrect_after 5
+    flush_interval 1s
+  </store>
+</match>
+```
+__Use collectd + influxdb + grafana to collect server metrics and visualize it__:
 
+- **How to access scripted dashboard*: 
+   - After grafana started please head to url: http://{{grafana_url}}:3000 and login with user/pass default admin/admin
+   - To go to a specific server dashboard : http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname ( replace hostname with your server hostname )
+   - Or if you want to stack two dashboard side by side: (hostname1 and hostname2) http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname(1|2)&span=6
+   - Or you only want to display special metrics: http://{{grafana_url}}:3000/dashboard/script/getdash.js?host=hostname(1|2)&span=6&metric=cpu,load,memory
 
+- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also you **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI* or **https://github.com/chrisboulton/collectd-python-mysql* which quit easy to tweak to match with your need.
