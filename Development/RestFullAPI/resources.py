@@ -60,15 +60,15 @@ class Person(Resource):
   def get(self,id=None,maximum=None):
     data = []
     if id:
-      result = mongo.db.person.find_one({"_id": ObjectId(id)}, {"_id": 0})
+      result = mongo.db.person.find_one({"_id": ObjectId(id)}, {"_id": 0,"id_card": 0})
       return jsonify({'Person':result})
     elif maximum:
-      result = mongo.db.person.find({},{"_id": 0}).limit(maximum)
+      result = mongo.db.person.find({},{"_id": 0,"id_card": 0}).limit(maximum)
       for res in result:
         data.append(res)
       return jsonify({'Person':data})
     else:
-      result = mongo.db.person.find({},{"_id": 0})
+      result = mongo.db.person.find({},{"_id": 0,"id_card": 0})
       for res in result:
         data.append(res)
       return jsonify({'Person':data})

@@ -83,31 +83,8 @@ def logout(header):
 	return (r.text)
 
 if __name__ == "__main__":
-	auth_token = open('token','r').readline()
+	auth_token = login()
 	header = get_header(auth_token)
 	auth = get(header)
+	insert(header)
 	print(auth)
-	# print(auth)
-	# if auth:
-	# 	try:
-	# 		if auth['msg'] == 'Token has expired':
-	# 			auth_token = login()
-	# 			f = open('token','w')
-	# 			f.write(auth_token)
-	# 			f.close
-	# 			get(auth_token)
-	# 			header = get_header(auth_token)
-	# 			insert(header)
-	# 		elif auth['Person']:
-	# 			print(auth_token)
-	# 			header = get_header(auth_token)
-	# 			insert(header)
-	# 	except Exception:
-	# 		pass
-
-	# 	if auth['Person']:
-	# 		header = get_header(auth_token)
-	# 		print(get(header))
-	# print("End of testing. Logging out")
-	#print(logout(header))
-	print(login())
