@@ -30,8 +30,8 @@ You must have ansible installed on machine where you want to run this.
   - **collectd**: Install collectd on server to collect server metrics like cpu, mem, load, disk, io...
   - **docker**: Install docker-ce and docker-compose ( This role use most of the code from https://github.com/geerlingguy/ansible-role-docker )
   - **elasticsearch**: This role will create a single node elasticsearch cluster with kibana using docker
-  - **fluentd**: This role will start a fluentd container which running fluentd agent to collectd logs and sent to elasticsearch 
-  - **grafana**: Install and start grafana dashboard container, which included a scripted dashboard that auto generate stats for all servers. ( Scripted dashboard come with 3 js files, which I re-use from `https://github.com/anryko/grafana-influx-dashboard` and make some small changes )
+  - **fluentd**: This role will build a custom docker image and start a fluentd container which running fluentd agent to collect logs and sent to elasticsearch 
+  - **grafana**: Build a custom grafana docker image and start grafana dashboard container, which included a templating and a scripted dashboard. ( Scripted dashboard come with 3 js files, which I re-use from `https://github.com/anryko/grafana-influx-dashboard` and make some small changes ). The templating dashboard come with **Main Dashboard** name located at home page after you login. ( Please use grafana default user and password )
   - **influxb**: Install and start an influxdb instance to receiving metrics from collectd
   - **rsyslog**: Install rsyslogs on server to collect system logs and send it to fluentd
 - __inventory__ file: Storing your inventory. You should change and define your server group and ip accordingly
@@ -89,7 +89,7 @@ __Use collectd + influxdb + grafana to collect server metrics and visualize it__
      ```
      ( It's better to get all server hostname via database, because sometime you want to automated your inventory files as well. This is just a quick dirty hack. )
      
-- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also you **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI** or **https://github.com/chrisboulton/collectd-python-mysql** which quit easy to tweak to match with your need.
+- If you want to also monitor your database metrics for performance or applications query statistic long queries, slow queries you can also use **collectd** to do that by using **https://collectd.org/wiki/index.php/Plugin:DBI** or **https://github.com/chrisboulton/collectd-python-mysql** which quit easy to tweak to match with your need.
 
 __Use fluentd for logs collection and analysic, troubleshooting__: 
 
