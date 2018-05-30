@@ -22,7 +22,7 @@ For python see `requirements.txt`
 
 ## API References:
 - ``` / -> index```
-- ``` /api -> Method=Get to retrieve contents```
+- ``` /api -> Method=Get/Post/Put/Delete to Retrieve/Insert/Update/Delete contents```
 - ``` /login -> Method=Post for login ```
 - ``` /logout -> Method=Post for logout ```
 - ``` /search/<string:name> -> Method=Get for searching ```
