@@ -115,25 +115,27 @@ class ActionModule(ActionBase):
       return res.status_code
 
     def create_token(self,grafana_ip):
-        grafana_url = 'http://admin:admin@{}:3000'.format(grafana_ip)
-        grafana_url_org = grafana_url + '/api/user/using/1'
-        grafana_url_api = grafana_url + '/api/auth/keys'
-        grafana_key_name = "apikeycurl"
-        grafana_key_role = "Admin"
-        data = {"name":"apikeycurl", "role": "Admin"}
-        r = requests.post(grafana_url_org)
-        if r.text == '{"message":"Active organization changed"}':
-          if len(json.loads(requests.get(grafana_url_api).text)) == 0:
-            re = requests.post(grafana_url_api,json=data)
-            key = json.loads(re.text)['key']
-            return key
-          elif (json.loads(requests.get(grafana_url_api).text)[0])['name'] == grafana_key_name:
-            grafana_url_key_api = grafana_url_api + "/" + (json.loads(requests.get(grafana_url_api).text)[0])['id']
-            re = requests.delete(grafana_url_key_api)
-            '''Re-create api key'''
-            res = requests.post(grafana_url_api,json=data)
-            key = json.loads(re.text)['key']
-            return key
+      
+      '''Here we use the default org which is id 1'''
+      grafana_url = 'http://admin:admin@{}:3000'.format(grafana_ip)
+      grafana_url_org = grafana_url + '/api/user/using/1'
+      grafana_url_api = grafana_url + '/api/auth/keys'
+      grafana_key_name = "apikeycurl"
+      grafana_key_role = "Admin"
+      data = {"name":"apikeycurl", "role": "Admin"}
+      r = requests.post(grafana_url_org)
+      if r.text == '{"message":"Active organization changed"}':
+        if len(json.loads(requests.get(grafana_url_api).text)) == 0:
+          re = requests.post(grafana_url_api,json=data)
+          key = json.loads(re.text)['key']
+          return key
+        elif (json.loads(requests.get(grafana_url_api).text)[0])['name'] == grafana_key_name:
+          grafana_url_key_api = grafana_url_api + "/" + (json.loads(requests.get(grafana_url_api).text)[0])['id']
+          re = requests.delete(grafana_url_key_api)
+          '''Re-create api key'''
+          res = requests.post(grafana_url_api,json=data)
+          key = json.loads(re.text)['key']
+          return key
 
 
 class DictConvert(dict):
